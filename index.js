@@ -49,12 +49,15 @@ const runCommand = (cmd, args = [], opt = {}) =>
 
 const s = new useStatus();
 
-const pull = async () => {
+const pull = () => {
   if (s.isStatus("busy") && s.cached) return s.cached;
 
   s.setStatus("busy");
 
   s.cached = new Promise(async (resolve) => {
+    await git.stash(); 
+    await git.stash('clear');
+
     let results;
     try {
       results = await git.pull(config.branch);
