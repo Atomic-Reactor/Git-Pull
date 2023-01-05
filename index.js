@@ -1,7 +1,17 @@
+const path = require("path");
+const fs = require("fs-extra");
 const Pulse = require("./pulse");
 const op = require("object-path");
-const config = require("./config");
 const { spawn } = require("child_process");
+
+let config = {
+  branch: "production",
+  watch: null,
+};
+
+if (fs.existsSync(path.join(process.cwd(), "config.js"))) {
+  config = require("./config");
+}
 
 const git = require("simple-git").default(config.watch);
 
@@ -55,8 +65,8 @@ const pull = () => {
   s.setStatus("busy");
 
   s.cached = new Promise(async (resolve) => {
-    await git.stash(); 
-    await git.stash('clear');
+    await git.stash();
+    await git.stash("clear");
 
     let results;
     try {
