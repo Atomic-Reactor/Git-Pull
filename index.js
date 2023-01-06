@@ -1,4 +1,5 @@
 const path = require("path");
+const chalk = require("chalk");
 const fs = require("fs-extra");
 const Pulse = require("./pulse");
 const op = require("object-path");
@@ -65,14 +66,29 @@ const pull = () => {
   s.setStatus("busy");
 
   s.cached = new Promise(async (resolve) => {
-    await git.stash();
-    await git.stash("clear");
+    try {
+      await git.stash();
+    } catch (err) {
+      chalk.magenta("1. ERROR");
+      console.log(err);
+      console.log("");
+    }
+
+    try {
+      await git.stash("clear");
+    } catch (err) {
+      chalk.magenta("2. ERROR");
+      console.log(err);
+      console.log("");
+    }
 
     let results;
     try {
       results = await git.pull(config.branch);
     } catch (err) {
+      chalk.magenta("3. ERROR");
       console.log(err);
+      console.log("");
       s.setStatus("ready");
     }
 
